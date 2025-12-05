@@ -16,3 +16,4 @@ __all__ = [
     "FakeSearchProvider",
     "FakeDeepResearchClient",
 ]
+"""Utilities for evaluating research outputs and ranking search results."""
