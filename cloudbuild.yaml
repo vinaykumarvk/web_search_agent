@@ -1,0 +1,69 @@
+# Cloud Build configuration for automatic deployment from Git
+# This file enables automatic builds and deployments when code is pushed to the repository
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/web-research-agent:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/web-research-agent:latest'
+      - '.'
+    id: 'build-image'
+
+  # Push the Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/web-research-agent:$COMMIT_SHA'
+    id: 'push-image-sha'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/web-research-agent:latest'
+    id: 'push-image-latest'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'web-research-agent'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/web-research-agent:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+      - '--timeout'
+      - '900'
+      - '--port'
+      - '8080'
+      - '--max-instances'
+      - '10'
+      - '--min-instances'
+      - '0'
+    id: 'deploy-cloud-run'
+
+# Images to be pushed to Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/web-research-agent:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/web-research-agent:latest'
+
+# Options
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+# Timeout for the entire build
+timeout: '1800s'  # 30 minutes
+

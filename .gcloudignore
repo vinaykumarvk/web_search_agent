@@ -1,0 +1,60 @@
+# Files to ignore when deploying to Google Cloud
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+tasks.db
+metrics.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (keep for reference but not needed in deployment)
+*.md
+!README.md
+
+# Tests
+tests/
+test_*.py
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Temporary files
+/tmp/
+*.tmp
+

@@ -40,7 +40,27 @@
 
 ## Deployment Options
 
-### Option 1: Cloud Run (Recommended)
+### Option 0: Automatic Deployment from Git (Recommended)
+
+If you have Cloud Build connected to your GitHub repository, deployments happen automatically on push.
+
+**Setup:**
+1. Connect your GitHub repository to Cloud Build in GCP Console
+2. Create a trigger that builds on push to `main` branch
+3. Use the provided `cloudbuild.yaml` configuration
+4. Set up Secret Manager for `OPENAI_API_KEY`
+
+**How it works:**
+- Push code to GitHub → Cloud Build automatically triggers
+- Builds Docker image → Pushes to Container Registry
+- Deploys to Cloud Run → Service URL available
+
+**Manual trigger (if needed):**
+```bash
+gcloud builds submit --config cloudbuild.yaml
+```
+
+### Option 1: Cloud Run (Manual Deployment)
 
 #### Prerequisites
 ```bash
