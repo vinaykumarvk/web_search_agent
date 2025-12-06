@@ -332,10 +332,20 @@ async def create_research_job(payload: ResearchRequest, background_tasks: Backgr
             overall_confidence=overall_confidence,
         )
     except Exception as exc:
-        logger.exception("Research job failed: %s", exc, extra={"query": payload.query, "controls": payload.controls.dict()})
+        import traceback
+        error_traceback = traceback.format_exc()
+        logger.exception("Research job failed: %s", exc, extra={
+            "query": payload.query, 
+            "controls": payload.controls.dict(),
+            "traceback": error_traceback
+        })
+        # Return more detailed error in development, generic in production
+        error_detail = str(exc)
+        if settings.observability.log_level == "DEBUG":
+            error_detail = f"{str(exc)}\n\nTraceback:\n{error_traceback}"
         raise HTTPException(
             status_code=500,
-            detail=f"Research job failed: {str(exc)}"
+            detail=f"Research job failed: {error_detail}"
         ) from exc
 
 
