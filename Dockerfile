@@ -33,17 +33,8 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
 
-# Use gunicorn for production
+# Use gunicorn with uvicorn workers for FastAPI (ASGI)
 # Cloud Run sets PORT env var - must read it at runtime
-# Use sh -c to properly expand PORT env var
-CMD sh -c 'exec gunicorn \
-  --bind 0.0.0.0:${PORT:-8080} \
-  --workers 1 \
-  --threads 8 \
-  --timeout 900 \
-  --access-logfile - \
-  --error-logfile - \
-  --log-level info \
-  --preload \
-  app.main:app'
+# Use JSON format for CMD to prevent signal handling issues
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 1 --worker-class uvicorn.workers.UvicornWorker --timeout 900 --access-logfile - --error-logfile - --log-level info --preload app.main:app"]
 
