@@ -10,7 +10,7 @@
 ${executive_summary}
 
 ## Deliverable
-${deliverable_body}
+${deliverable}
 
 ## Sources
 ${sources}

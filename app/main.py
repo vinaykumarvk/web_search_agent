@@ -98,11 +98,20 @@ def _run_sync_research(
 ]:
     """Execute the orchestrated workflow synchronously."""
 
+    import time
+    total_start = time.time()
+    logger.info("🚀 Starting research workflow", extra={"query": payload.query, "depth": payload.controls.depth})
+    print(f"🚀 Starting research workflow: {payload.query} (depth: {payload.controls.depth})")
+
     metadata = {"controls": payload.controls}
     if metadata_extra:
         metadata.update(metadata_extra)
     normalized = NormalizedRequest(query=payload.query, metadata=metadata)
     result = _orchestrator.run(normalized)
+    
+    total_elapsed = time.time() - total_start
+    logger.info(f"✅ Research workflow completed in {total_elapsed:.2f}s")
+    print(f"✅ Research workflow completed in {total_elapsed:.2f}s")
     output = result["output"]
     envelope: ResponseEnvelope = output["envelope"]
     quality: Optional[QualityReport] = output.get("quality")

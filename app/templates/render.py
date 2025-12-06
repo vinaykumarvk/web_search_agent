@@ -131,6 +131,7 @@ def render_document(
     merged_fields.setdefault("region_timeframe", "n/a")
     merged_fields.setdefault("open_questions", "(none provided)")
     merged_fields["deliverable"] = deliverable_content
+    merged_fields["deliverable_body"] = deliverable_content  # Also set deliverable_body for template compatibility
 
     _validate_required_fields("Base envelope", merged_fields, MANDATORY_BASE_FIELDS)
 

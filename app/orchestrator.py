@@ -198,12 +198,20 @@ class Orchestrator:
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        import logging
+        logger = logging.getLogger("app")
+        
+        start_time = time.time()
         attempt = 0
         last_error: Exception | None = None
         while attempt < self.retry_config.max_attempts:
             attempt += 1
             try:
-                return self._execute_with_timeout(func, *args, **kwargs)
+                result = self._execute_with_timeout(func, *args, **kwargs)
+                elapsed = time.time() - start_time
+                logger.info(f"⏱️  [{stage}] completed in {elapsed:.2f}s")
+                print(f"⏱️  [{stage}] completed in {elapsed:.2f}s")  # Also print to stdout for Docker logs
+                return result
             except TimeoutError as exc:
                 last_error = exc
             except Exception as exc:  # noqa: BLE001
@@ -212,8 +220,11 @@ class Orchestrator:
             if attempt < self.retry_config.max_attempts:
                 time.sleep(self.retry_config.backoff_factor * (2 ** (attempt - 1)))
 
+        elapsed = time.time() - start_time
         error_msg = str(last_error) if last_error else "Unknown error"
         error_type = type(last_error).__name__ if last_error else "UnknownError"
+        logger.error(f"❌ [{stage}] failed after {elapsed:.2f}s: {error_type}: {error_msg}")
+        print(f"❌ [{stage}] failed after {elapsed:.2f}s: {error_type}: {error_msg}")
         raise OrchestrationError(
             f"{stage} agent failed after {self.retry_config.max_attempts} attempts: {error_type}: {error_msg}"
         ) from last_error
