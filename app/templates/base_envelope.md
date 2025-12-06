@@ -16,7 +16,7 @@ ${deliverable}
 ${sources}
 
 ## Assumptions & Gaps
-${assumptions}
+${assumptions_gaps}
 
 ## Next Steps
 ${next_steps}

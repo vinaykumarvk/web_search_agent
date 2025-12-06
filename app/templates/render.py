@@ -132,6 +132,9 @@ def render_document(
     merged_fields.setdefault("open_questions", "(none provided)")
     merged_fields["deliverable"] = deliverable_content
     merged_fields["deliverable_body"] = deliverable_content  # Also set deliverable_body for template compatibility
+    # Ensure assumptions_gaps is available (template uses assumptions_gaps)
+    if "assumptions_gaps" in merged_fields and "assumptions" not in merged_fields:
+        merged_fields["assumptions"] = merged_fields["assumptions_gaps"]  # Alias for template compatibility
 
     _validate_required_fields("Base envelope", merged_fields, MANDATORY_BASE_FIELDS)
 
