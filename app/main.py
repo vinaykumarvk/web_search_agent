@@ -131,7 +131,12 @@ async def _process_task(task_id: str, payload: ResearchRequest) -> None:
     metrics.emit_task_status(task_id, TaskStatus.RUNNING)
     task_status = ResearchTaskStatus(task_id=task_id, status=TaskStatus.RUNNING, envelope=None)
     _tasks[task_id] = task_status
-    _task_storage.save_task(task_status)  # Persist to database
+    
+    # Persist to database asynchronously (don't block if DB is slow)
+    try:
+        _task_storage.save_task(task_status)
+    except Exception as db_exc:
+        logger.warning("Failed to persist task to database (non-critical): %s", db_exc)
     
     try:
         metadata_extra: dict = {}
