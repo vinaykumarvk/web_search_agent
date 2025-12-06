@@ -1,0 +1,242 @@
+[
+  {
+    "query": "What is artificial intelligence?",
+    "description": "Simple definition query - quick answer",
+    "router_decision": {
+      "purpose": "custom",
+      "depth": "quick",
+      "profile": "DEFINITION_OR_SIMPLE_QUERY",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "low",
+      "max_searches": 2,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 1
+  },
+  {
+    "query": "Write a comprehensive Business Requirements Document for a mobile banking application",
+    "description": "BRD request - deep research needed",
+    "router_decision": {
+      "purpose": "brd",
+      "depth": "quick",
+      "profile": "BRD_MODELING",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 2,
+      "recency_bias": false
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 2
+  },
+  {
+    "query": "Research Apple Inc. company overview and recent financial performance",
+    "description": "Company research - standard depth",
+    "router_decision": {
+      "purpose": "company_research",
+      "depth": "quick",
+      "profile": "COMPANY_RESEARCH",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "low",
+      "max_searches": 2,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 3
+  },
+  {
+    "query": "Compare TAM vs SAM vs SOM in market sizing",
+    "description": "Market query - quick comparison",
+    "router_decision": {
+      "purpose": "market_query",
+      "depth": "quick",
+      "profile": "MARKET_OR_TREND_QUERY",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 2,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 4
+  },
+  {
+    "query": "Elaborate requirements for a user authentication feature into epics and user stories",
+    "description": "Requirement elaboration - standard depth",
+    "router_decision": {
+      "purpose": "req_elaboration",
+      "depth": "quick",
+      "profile": "REQUIREMENT_ELABORATION",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 2,
+      "recency_bias": false
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 5
+  },
+  {
+    "query": "Deep dive analysis of Tesla's autonomous driving strategy and competitive positioning",
+    "description": "Company research - deep analysis",
+    "router_decision": {
+      "purpose": "custom",
+      "depth": "deep",
+      "profile": "DEFINITION_OR_SIMPLE_QUERY",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 3,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 6
+  },
+  {
+    "query": "Create a BRD for implementing two-factor authentication",
+    "description": "BRD request - standard depth",
+    "router_decision": {
+      "purpose": "brd",
+      "depth": "quick",
+      "profile": "BRD_MODELING",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 2,
+      "recency_bias": false
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 7
+  },
+  {
+    "query": "What are the latest trends in cloud computing?",
+    "description": "Market trend query - standard depth",
+    "router_decision": {
+      "purpose": "custom",
+      "depth": "quick",
+      "profile": "DEFINITION_OR_SIMPLE_QUERY",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "low",
+      "max_searches": 2,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 8
+  },
+  {
+    "query": "Break down the requirement for a payment gateway integration",
+    "description": "Requirement elaboration - quick breakdown",
+    "router_decision": {
+      "purpose": "req_elaboration",
+      "depth": "quick",
+      "profile": "REQUIREMENT_ELABORATION",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "medium",
+      "max_searches": 2,
+      "recency_bias": false
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 9
+  },
+  {
+    "query": "I need a comprehensive document outlining what we should build for a customer portal",
+    "description": "Ambiguous query - should detect BRD intent",
+    "router_decision": {
+      "purpose": "custom",
+      "depth": "quick",
+      "profile": "DEFINITION_OR_SIMPLE_QUERY",
+      "needs_clarification": false
+    },
+    "strategy": {
+      "model": "gpt-5.1",
+      "effort": "low",
+      "max_searches": 2,
+      "recency_bias": true
+    },
+    "models_used": {
+      "router": "gpt-5-mini",
+      "clarifier": null,
+      "research": "gpt-5.1",
+      "writer": "gpt-5.1",
+      "fact_checker": "gpt-5.1"
+    },
+    "query_id": 10
+  }
+]

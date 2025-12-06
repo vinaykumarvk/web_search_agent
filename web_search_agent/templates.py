@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from string import Template
 from typing import Iterable, List, Mapping
 
@@ -24,7 +26,30 @@ TEMPLATES = {
 
 
 BASE_ENVELOPE = Template(
-    """# $title\n\n## Executive Summary\n$summary\n\n$deliverable\n\n## Sources\n$sources\n\n## Assumptions & Gaps\n$assumptions\n\n## Next Steps\n$next_steps\n"""
+    """# $title\n
+## Metadata
+- Purpose: $purpose
+- Depth: $depth
+- Audience: $audience
+- Region/Timeframe: $region_timeframe
+
+## Executive Summary
+$summary
+
+$deliverable
+
+## Sources
+$sources
+
+## Assumptions & Gaps
+$assumptions
+
+## Open Questions
+$open_questions
+
+## Next Steps
+$next_steps
+"""
 )
 
 
@@ -40,7 +65,13 @@ def render_envelope(
     summary: str,
     deliverable: str,
     sources: Iterable[Citation],
+    *,
+    purpose: str = "custom",
+    depth: str = "standard",
+    audience: str = "mixed",
+    region_timeframe: str = "n/a",
     assumptions: Iterable[str] | None = None,
+    open_questions: Iterable[str] | None = None,
     next_steps: Iterable[str] | None = None,
 ) -> str:
     """
@@ -52,13 +83,19 @@ def render_envelope(
 
     source_block = render_citations(list(sources)) or "- (no sources)"
     assumptions_block = "\n".join(f"- {item}" for item in (assumptions or ["(none provided)"]))
+    open_questions_block = "\n".join(f"- {item}" for item in (open_questions or ["(none provided)"]))
     next_steps_block = "\n".join(f"- {item}" for item in (next_steps or ["(none provided)"]))
 
     return BASE_ENVELOPE.safe_substitute(
         title=title,
+        purpose=purpose,
+        depth=depth,
+        audience=audience,
+        region_timeframe=region_timeframe,
         summary=summary,
         deliverable=deliverable,
         sources=source_block,
         assumptions=assumptions_block,
+        open_questions=open_questions_block,
         next_steps=next_steps_block,
     )

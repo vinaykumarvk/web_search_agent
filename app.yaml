@@ -1,0 +1,22 @@
+runtime: python
+env: flex
+
+runtime_config:
+  python_version: 3.11
+
+resources:
+  cpu: 2
+  memory_gb: 2
+  disk_size_gb: 10
+
+env_variables:
+  PORT: 8080
+
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 10
+
+handlers:
+- url: /.*
+  script: auto
+

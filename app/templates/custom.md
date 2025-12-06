@@ -1,2 +1,2 @@
 ### Custom Deliverable
-${custom_body}
+{notes}

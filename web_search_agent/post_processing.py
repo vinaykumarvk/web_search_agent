@@ -17,6 +17,8 @@ class TemplateEvaluation:
     citation_coverage_score: float
     template_completeness_score: float
     missing_sections: List[str]
+    has_uncited_numbers: bool = False
+    has_contradictions: bool = False
 
 
 def _estimate_claims(text: str) -> int:
@@ -28,6 +30,30 @@ def _count_citations(text: str) -> int:
     bracketed = re.findall(r"\[[^\]]+\]", text)
     parenthetical = re.findall(r"\([^)]*?\)", text)
     return len(bracketed) + len(parenthetical)
+
+
+def _has_numbers_without_citations(text: str) -> bool:
+    """Detect numeric tokens lacking nearby citations."""
+
+    sentences = [segment.strip() for segment in re.split(r"[.!?]+", text) if segment.strip()]
+    for sentence in sentences:
+        has_number = bool(re.search(r"\d", sentence))
+        has_citation = bool(re.search(r"\[[^\]]+\]|\([^)]*?\)", sentence))
+        if has_number and not has_citation:
+            return True
+    return False
+
+
+def _has_simple_contradictions(text: str) -> bool:
+    """Detect simple contradictory phrasing heuristically."""
+
+    lowered = text.lower()
+    contradictory_pairs = [
+        ("not available", "available"),
+        ("no evidence", "evidence"),
+        ("does not", "does"),
+    ]
+    return any(a in lowered and b in lowered for a, b in contradictory_pairs)
 
 
 def evaluate_report_sections(
@@ -76,12 +102,21 @@ def evaluate_report_sections(
         else 1.0
     )
 
-    return TemplateEvaluation(
+    evaluation = TemplateEvaluation(
         section_evaluations=section_evaluations,
         citation_coverage_score=citation_coverage_score,
         template_completeness_score=template_completeness_score,
         missing_sections=missing_sections,
     )
+
+    evaluation.has_uncited_numbers = any(
+        _has_numbers_without_citations(text) for text in sections.values()
+    )
+    evaluation.has_contradictions = any(
+        _has_simple_contradictions(text) for text in sections.values()
+    )
+
+    return evaluation
 
 
 def summarize_coverage_by_section(section_evaluations: Iterable[SectionEvaluation]) -> Dict[str, float]:

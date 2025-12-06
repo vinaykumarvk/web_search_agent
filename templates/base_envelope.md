@@ -1,6 +1,10 @@
 # {title}
 
-> Purpose: {purpose} | Depth: {depth} | Audience: {audience} | Region/Timeframe: {region_timeframe}
+## Metadata
+- Purpose: {purpose}
+- Depth: {depth}
+- Audience: {audience}
+- Region/Timeframe: {region_timeframe}
 
 ## Executive Summary
 {executive_summary}
@@ -11,8 +15,11 @@
 ## Sources & Evidence
 {sources}
 
-## Assumptions, Gaps, Open Questions
+## Assumptions & Gaps
 {assumptions_gaps}
+
+## Open Questions
+{open_questions}
 
 ## Next Steps / Options
 {next_steps}

@@ -19,10 +19,11 @@ def test_render_envelope_maintains_structure(fake_citations):
         deliverable=deliverable,
         sources=fake_citations,
         assumptions=["Assumption 1"],
+        open_questions=["Question 1"],
         next_steps=["Step 1"],
     )
 
     assert envelope.startswith("# Test")
-    for section in ["Executive Summary", "Deliverable", "Sources", "Assumptions", "Next Steps"]:
+    for section in ["Metadata", "Executive Summary", "Deliverable", "Sources", "Assumptions", "Open Questions", "Next Steps"]:
         assert f"## {section}" in envelope
     assert "[Source One](http://example.com/1)" in envelope

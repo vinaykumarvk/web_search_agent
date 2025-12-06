@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "web-research-agent-api",
+		"name": "Web Research Agent API",
+		"description": "API collection for the Web Research Agent - Multi-layered AI-powered research system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API is running"
+			},
+			"response": []
+		},
+		{
+			"name": "Readiness Check (Verify OpenAI API Key)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health/ready",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health",
+						"ready"
+					]
+				},
+				"description": "⚠️ IMPORTANT: Check if OpenAI API key is configured. This endpoint shows which services will use real OpenAI API calls vs fallbacks/mocks. Run this FIRST before testing other endpoints."
+			},
+			"response": []
+		},
+		{
+			"name": "Quick Research (Synchronous)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"What is artificial intelligence?\",\n  \"controls\": {\n    \"depth\": \"quick\",\n    \"purpose\": \"market_query\",\n    \"audience\": \"mixed\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/v1/agent/run",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"run"
+					]
+				},
+				"description": "Quick research that returns immediately"
+			},
+			"response": []
+		},
+		{
+			"name": "Standard Research (Synchronous)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"Compare cloud providers AWS vs Azure\",\n  \"controls\": {\n    \"depth\": \"standard\",\n    \"purpose\": \"company_research\",\n    \"audience\": \"exec\",\n    \"region\": \"Global\",\n    \"timeframe\": \"last year\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/v1/agent/run",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"run"
+					]
+				},
+				"description": "Standard research with moderate depth"
+			},
+			"response": []
+		},
+		{
+			"name": "Deep Research (Asynchronous)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"Comprehensive analysis of Tesla's business strategy\",\n  \"controls\": {\n    \"depth\": \"deep\",\n    \"purpose\": \"company_research\",\n    \"audience\": \"exec\",\n    \"region\": \"Global\",\n    \"timeframe\": \"last 2 years\",\n    \"output_format\": \"markdown\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/v1/agent/run",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"run"
+					]
+				},
+				"description": "Deep research that returns a task ID for polling"
+			},
+			"response": []
+		},
+		{
+			"name": "BRD Research",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"Create a BRD for a mobile banking app\",\n  \"controls\": {\n    \"depth\": \"deep\",\n    \"purpose\": \"brd\",\n    \"audience\": \"product\",\n    \"region\": \"US\",\n    \"timeframe\": \"current\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/v1/agent/run",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"run"
+					]
+				},
+				"description": "Business Requirements Document research"
+			},
+			"response": []
+		},
+		{
+			"name": "JSON Output Format",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"Research OpenAI's GPT models\",\n  \"controls\": {\n    \"depth\": \"standard\",\n    \"purpose\": \"market_query\",\n    \"output_format\": \"json\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/v1/agent/run",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"run"
+					]
+				},
+				"description": "Request JSON output format instead of markdown"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Task Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v1/agent/tasks/{{task_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"tasks",
+						"{{task_id}}"
+					]
+				},
+				"description": "Get status and results for an async task. Replace {{task_id}} with actual task ID from async request."
+			},
+			"response": []
+		},
+		{
+			"name": "Stream Task Updates",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v1/agent/tasks/{{task_id}}/stream",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"agent",
+						"tasks",
+						"{{task_id}}",
+						"stream"
+					]
+				},
+				"description": "SSE stream for real-time task updates. Replace {{task_id}} with actual task ID."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "task_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

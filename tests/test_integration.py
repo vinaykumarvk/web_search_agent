@@ -10,7 +10,7 @@ def test_deep_research_flow(deep_research_client: FakeDeepResearchClient, sample
     assert task_state["status"] == "completed"
 
     envelope = task_state["response"]
-    for section in ["Executive Summary", "Deliverable", "Sources", "Assumptions", "Next Steps"]:
+    for section in ["Metadata", "Executive Summary", "Deliverable", "Sources", "Assumptions", "Open Questions", "Next Steps"]:
         assert f"## {section}" in envelope
 
     assert "Deep research on" in envelope

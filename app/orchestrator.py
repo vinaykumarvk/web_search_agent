@@ -26,6 +26,8 @@ class RouterDecision:
     purpose: str
     depth: str
     needs_clarification: bool = False
+    profile: str | None = None
+    need_deep_research: bool = False
 
 
 @dataclass
@@ -83,7 +85,7 @@ class DepthPolicy:
 class RetryConfig:
     max_attempts: int = 3
     backoff_factor: float = 0.5
-    timeout_seconds: float = 15.0
+    timeout_seconds: float = 300.0  # 5 minutes minimum for any response
 
 
 class OrchestrationError(RuntimeError):
@@ -99,12 +101,14 @@ class Orchestrator:
         clarifier_agent: Optional[Any],
         researcher_agent: Any,
         writer_agent: Any,
+        fact_checker_agent: Optional[Any] = None,
         retry_config: RetryConfig | None = None,
     ) -> None:
         self.router_agent = router_agent
         self.clarifier_agent = clarifier_agent
         self.researcher_agent = researcher_agent
         self.writer_agent = writer_agent
+        self.fact_checker_agent = fact_checker_agent
         self.retry_config = retry_config or RetryConfig()
 
     def run(self, request: NormalizedRequest) -> Dict[str, Any]:
@@ -155,6 +159,20 @@ class Orchestrator:
             self.writer_agent.write,
             writer_payload,
         )
+
+        if self.fact_checker_agent:
+            # Get strategy for effort level (fact checking uses high effort by default)
+            from app.strategy import select_strategy
+            strategy = select_strategy(router_decision.profile or "DEFINITION_OR_SIMPLE_QUERY", router_decision.depth)
+            qa_result = self._call_with_controls(
+                "fact_checker",
+                self.fact_checker_agent.check,
+                written_output,
+                effort=strategy.effort,
+                depth=router_decision.depth,
+            )
+            written_output["quality"] = qa_result
+
         return {
             "decision": router_decision,
             "plan": plan,
@@ -183,12 +201,13 @@ class Orchestrator:
             if attempt < self.retry_config.max_attempts:
                 time.sleep(self.retry_config.backoff_factor * (2 ** (attempt - 1)))
 
+        error_msg = str(last_error) if last_error else "Unknown error"
+        error_type = type(last_error).__name__ if last_error else "UnknownError"
         raise OrchestrationError(
-            f"{stage} agent failed after {self.retry_config.max_attempts} attempts: {last_error}"
+            f"{stage} agent failed after {self.retry_config.max_attempts} attempts: {error_type}: {error_msg}"
         ) from last_error
 
     def _execute_with_timeout(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         with ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(func, *args, **kwargs)
             return future.result(timeout=self.retry_config.timeout_seconds)
-

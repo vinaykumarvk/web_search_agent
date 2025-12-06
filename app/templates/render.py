@@ -16,6 +16,7 @@ PURPOSE_TO_TEMPLATE = {
     "company_research": "company_research.md",
     "req_elaboration": "req_elaboration.md",
     "market_query": "market_query.md",
+    "custom": "custom.md",
 }
 
 MANDATORY_BASE_FIELDS = [
@@ -27,6 +28,7 @@ MANDATORY_BASE_FIELDS = [
     "executive_summary",
     "sources",
     "assumptions_gaps",
+    "open_questions",
     "next_steps",
     "deliverable",
 ]
@@ -64,6 +66,9 @@ MANDATORY_DELIVERABLE_FIELDS = {
         "data_points",
         "confidence",
         "source_summary",
+    ],
+    "custom": [
+        "notes",
     ],
 }
 
@@ -114,6 +119,8 @@ def render_document(
 
     merged_fields = dict(base_fields)
     merged_fields.setdefault("purpose", purpose)
+    merged_fields.setdefault("region_timeframe", "n/a")
+    merged_fields.setdefault("open_questions", "(none provided)")
     merged_fields["deliverable"] = deliverable_content
 
     _validate_required_fields("Base envelope", merged_fields, MANDATORY_BASE_FIELDS)
