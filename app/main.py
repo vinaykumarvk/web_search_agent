@@ -288,21 +288,33 @@ async def readiness_check() -> dict:
 
 @app.post("/v1/agent/run", response_model=Union[ResearchResponse, ResearchTaskCreated])
 async def create_research_job(payload: ResearchRequest, background_tasks: BackgroundTasks):
-    """Start a research run. Deep/async requests are queued; quick/standard runs return immediately."""
+    """Start a research run. Deep research ALWAYS returns immediately with task_id to avoid timeouts.
+    Quick/standard runs return immediately with results. Use GET /v1/agent/tasks/{task_id} to poll for deep research results."""
 
     try:
+        # Deep research ALWAYS runs asynchronously to avoid gateway timeouts
+        # This ensures immediate response with task_id, then background processing
         async_requested = payload.controls.async_mode or payload.controls.depth == Depth.DEEP
 
         if async_requested:
+            # Create task_id and return IMMEDIATELY - no blocking operations
             task_id = str(uuid4())
+            
+            # Minimal in-memory task status (don't block on database writes)
             _tasks[task_id] = ResearchTaskStatus(
                 task_id=task_id,
                 status=TaskStatus.QUEUED,
                 envelope=None,
             )
+            
+            # Queue background task - this is non-blocking
             background_tasks.add_task(_process_task, task_id, payload)
+            
+            # Return immediately - background task will handle all processing
+            logger.info("Created async task", extra={"task_id": task_id, "query": payload.query, "depth": payload.controls.depth})
             return ResearchTaskCreated(task_id=task_id, status=TaskStatus.QUEUED, estimated_mode="async")
 
+        # Quick/Standard depth - run synchronously (should complete quickly)
         envelope, quality, bibliography, source_map, notes, findings, evidence, overall_confidence = _run_sync_research(payload)
         return ResearchResponse(
             envelope=envelope,
