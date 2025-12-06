@@ -149,13 +149,23 @@ class GPT5WriterAgent:
         try:
             # Use Responses API (newer generation API) for GPT-5.1
             # Responses API supports reasoning/verbosity parameters and better performance
+            # Adjust max_output_tokens based on depth for faster responses
+            # Quick: 1000 tokens, Standard: 2000 tokens, Deep: 4000 tokens
+            depth_str = depth if isinstance(depth, str) else getattr(depth, "value", "standard")
+            if depth_str == "quick":
+                max_tokens = 1000  # Faster for quick research
+            elif depth_str == "standard":
+                max_tokens = 2000  # Balanced for standard research
+            else:  # deep
+                max_tokens = 4000  # Full length for deep research
+            
             response = self.client.responses.create(
                 model=self.model,
                 input=[
                     {"role": "system", "content": system_msg},
                     {"role": "user", "content": f"{developer_msg}\n\n{user_prompt}"},
                 ],
-                max_output_tokens=4000,
+                max_output_tokens=max_tokens,
                 temperature=0.3,
             )
 
@@ -173,8 +183,17 @@ class GPT5WriterAgent:
                 raise WriterError("Writer returned empty output")
 
             executive_summary = self._extract_executive_summary(deliverable_text)
+            # Only generate summary separately for deep research to avoid extra API call
+            # For quick/standard, extract from deliverable or use a simple fallback
+            depth_str = depth if isinstance(depth, str) else getattr(depth, "value", "standard")
             if not executive_summary:
-                executive_summary = self._generate_executive_summary(query, research_context)
+                if depth_str == "deep":
+                    # For deep research, make separate call for better summary
+                    executive_summary = self._generate_executive_summary(query, research_context)
+                else:
+                    # For quick/standard, use first paragraph or simple fallback
+                    paragraphs = deliverable_text.split("\n\n")
+                    executive_summary = paragraphs[0][:500] if paragraphs else f"Summary for: {query}"
 
             return {
                 "deliverable": deliverable_text,

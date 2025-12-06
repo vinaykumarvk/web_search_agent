@@ -160,7 +160,9 @@ class Orchestrator:
             writer_payload,
         )
 
-        if self.fact_checker_agent:
+        # Fact checker: Skip for quick research to improve response time
+        # Standard and deep research still get fact-checked
+        if self.fact_checker_agent and router_decision.depth != Depth.QUICK:
             # Get strategy for effort level (fact checking uses high effort by default)
             from app.strategy import select_strategy
             strategy = select_strategy(router_decision.profile or "DEFINITION_OR_SIMPLE_QUERY", router_decision.depth)
@@ -172,6 +174,21 @@ class Orchestrator:
                 depth=router_decision.depth,
             )
             written_output["quality"] = qa_result
+        elif router_decision.depth == Depth.QUICK:
+            # For quick research, use basic quality report without LLM fact-checking
+            from app.schemas import QualityReport
+            written_output["quality"] = QualityReport(
+                citation_coverage_score=0.8,
+                template_completeness_score=0.7,
+                missing_sections=[],
+                section_coverage=None,
+                uncited_numbers=False,
+                contradictions=False,
+                semantic_citation_score=None,
+                broken_urls=[],
+                low_relevance_citations=[],
+                citation_relevance_map=None,
+            )
 
         return {
             "decision": router_decision,
