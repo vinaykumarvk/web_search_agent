@@ -8,7 +8,16 @@ class MissingSectionError(ValueError):
     """Raised when a required section is absent or empty."""
 
 
-TEMPLATE_DIR = Path(__file__).resolve().parents[2] / "templates"
+# Template directory - use app/templates in production, fallback to templates/ for compatibility
+# In Docker, __file__ will be /app/app/templates/render.py, so parents[2] = /app
+_TEMPLATE_BASE = Path(__file__).resolve().parents[2]
+if (_TEMPLATE_BASE / "app" / "templates").exists():
+    TEMPLATE_DIR = _TEMPLATE_BASE / "app" / "templates"
+elif (_TEMPLATE_BASE / "templates").exists():
+    TEMPLATE_DIR = _TEMPLATE_BASE / "templates"
+else:
+    # Fallback to app/templates relative to current file
+    TEMPLATE_DIR = Path(__file__).resolve().parent
 BASE_TEMPLATE_NAME = "base_envelope.md"
 
 PURPOSE_TO_TEMPLATE = {

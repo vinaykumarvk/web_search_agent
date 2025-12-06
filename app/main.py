@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 from uuid import uuid4
 from typing import Dict, Union, Optional, Tuple
 
@@ -31,8 +32,13 @@ from app.schemas import (
 from app.tools.deep_research import DeepResearchClient, MockDeepResearchClient
 
 # Ensure .env is loaded even if uvicorn is started from a different CWD.
+# In Docker, __file__ will be /app/app/main.py, so parents[1] = /app
 _DOTENV_PATH = Path(__file__).resolve().parents[1] / ".env"
-load_dotenv(_DOTENV_PATH, override=False)
+if _DOTENV_PATH.exists():
+    load_dotenv(_DOTENV_PATH, override=False)
+# Also try loading from current working directory (for local development)
+elif Path(".env").exists():
+    load_dotenv(".env", override=False)
 settings = load_settings()
 configure_logging(settings.observability)
 tracer = configure_tracing(settings.observability)
